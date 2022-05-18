@@ -1,7 +1,7 @@
-#include "holberton.h"
+#include "main.h"
 
 /**
- * findBuiltIns - validates if command is builtin and executes
+ * findBuiltIns - checks if command is built in and executes
  * @build: input build
  * Return: true if found, false if not
  */
@@ -92,3 +92,4 @@ int aliasFunc(config *build)
 	(void)build;
 	write(STDOUT_FILENO, str, _strlen(str));
 	return (1);
+}

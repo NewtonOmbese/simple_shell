@@ -1,4 +1,4 @@
-#include "holberton.h"
+#include "main.h"
 
 /**
  * helpAlias - instructions on how to exit
@@ -93,3 +93,4 @@ int helpHelp(config *build)
 	write(STDOUT_FILENO, str, _strlen(str));
 	return (1);
 }
+

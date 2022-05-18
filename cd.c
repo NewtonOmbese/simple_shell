@@ -1,4 +1,4 @@
-#include "holberton.h"
+#include "main.h"
 
 /**
  * cdFunc - execute cd builtin
@@ -21,12 +21,12 @@ int cdFunc(config *build)
 		updateEnviron(build);
 	return (1);
 }
-
 /**
  * cdToHome - change directory to home
  * @build: input build
  * Return: true on success, false on failure
  */
+
 _Bool cdToHome(config *build)
 {
 	register int i;
@@ -44,13 +44,13 @@ _Bool cdToHome(config *build)
 	free(str);
 	return (true);
 }
-
 /**
  * cdToPrevious - change directory to previous directory -
  * address is found in OLDPWD env var
  * @build: input build
  * Return: true on success, false on failure
  */
+
 _Bool cdToPrevious(config *build)
 {
 	register int i;
@@ -75,12 +75,12 @@ _Bool cdToPrevious(config *build)
 	free(str);
 	return (true);
 }
-
 /**
  * cdToCustom - change directory to what user inputs in
  * @build: input build
  * Return: true on success, false on failure
  */
+
 _Bool cdToCustom(config *build)
 {
 	register int changeStatus;
@@ -100,6 +100,7 @@ _Bool cdToCustom(config *build)
  * @build: input build
  * Return: true on success false on failure
  */
+
 _Bool updateEnviron(config *build)
 {
 	register int i;
