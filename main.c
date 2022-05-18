@@ -1,24 +1,32 @@
 #include "shell.h"
 
 /**
- * main - entry point
+ * main - Program's entry point.
  *
- * Return: 0 on success, 1 on error
+ * Return: Always 0.
  */
-
-int main()
+int main(void)
 {
-  char *line;
-  char **args;
-  int status;
+	char *buff;
+	int status;
+	char *str;
+	char *argv[BUF_SIZE];
 
-  do {
-    printf("> ");
-    line = lsh_read_line();
-    args = lsh_split_line(line);
-    status = lsh_execute(args);
-
-    free(line);
-    free(args);
-  } while (status);
+	buff = malloc(sizeof(char) * BUF_SIZE);
+	while (1)
+	{
+		if (get_line(buff) == -1)
+		{
+			if (isatty(STDIN_FILENO))
+				WRITE_OUT("\n");
+			break;
+		}
+		str = rmNewline(buff);
+		parse(str, argv);
+		if (_strcmp(argv[0], "exit") == 0)
+			break;
+		execute(argv);
+	}
+	free(buff);
+	return (0);
 }
