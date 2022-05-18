@@ -1,5 +1,13 @@
-imple shell The project, simple shell is the final project of the first trimester in ALX-SE Program, is about building a program as similar as possible to the unix shell using the programming language C.
+# simple_shell
 
+## Description
 
+A UNIX command interpreter for ALX school Group project. This program was written entirely in C as a milestone project for Alx School.
 
-This project was built by Dorcas Emmanuel and gedion Mulatu Siyoum
+## AUTHORS
+
+This file contains the details of all the individuals that contributed to this shell project.
+
+## Credits
+
+All codes written by Mikiyas Bekele and Adam Debalke.
