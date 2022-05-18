@@ -1,141 +1,201 @@
-# <a href="url"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvdnPafurv1YrZNAe_O345gWpqyExw_mxITg&usqp=CAU" align="middle" width="100" height="100"></a> simple_shell
+# simple_shell
+ A simple UNIX command interpreter making as a final project of the low-level programming and algorithm quarter at ALX school of software engineering
 
+## Overview
+Sodashy is a sh-compatible command language interpreter that executes commands read from the standard input or from a file.
 
-## Table of Contents
-* [Description](#description)
-* [File Structure](#file-structure)
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Example of Use](#example-of-use)
-* [Bugs](#bugs)
-* [Authors](#authors)
-* [License](#license)
+## Invocation
+Usage: Sodash Sodash is started with the standard input connected to the terminal. To start, compile all .c located in this repository by using this command:
 
-## Description
-simple_shell is a command line interpreter, or shell, in the tradition of the first Unix shell written by Ken Thompson in 1971. This shell is intentionally minimalistic, yet includes the basic functionality of a traditional Unix-like command line user interface. 
-Standard functions and system calls employed in simple_shell include:
-   `access, execve, exit, fork, free, fstat, getline, malloc, perror, signal, stat, wait, write.`
+gcc -Wall -Werror -Wextra -pedantic *.c -o sodash
+./sodash
+Sodash is allowed to be invoked interactively and non-interactively. If sodash is invoked with standard input not connected to a terminal, it reads and executes received commands in order.
 
-## File Structure
-* [AUTHORS](AUTHORS) - List of contributors to this repository
-* [man_1_simple_shell](man_1_simple_shell) - Manual page for the simple_shell
-* [shell.h](shell.h) - program header file
-* [builtins.c](builtins.c) - major builtin functions
-  * `check_for_builtins` - checks to see if the user's command matches a builtin
-  * `new_exit` - exits the shell with the option of a specified status
-  * `_env` - prints the shell's environment variables to the standard output
-  * `new_setenv` - initializes a new environment variable, or modifies an existing one
-  * `new_unsetenv` - removes an environment variable
-* [builtins2.c](builtins2.c) - helper functions for the builtins
-  * `add_key` - creates a new environment variable
-  * `find_key` - finds an environment variable in the environment array
-  * `add_value` - creates a new environment variable string
-  * `_atoi` - converts a string into a non-negative integer
-* [environment.c](environment.c) - functions related to the environment
-  * `make_env` - creates the shell's environment from the parent process
-  * `free_env` - frees the shell's environment
-* [errors.c](errors.c) - functions related to printing errors
-  * `print_error` - prints an error message to the standard error
-  * `_puts2` - prints a string to the standard error
-  * `_uitoa` - converts an unsigned integer to a string
-* [memory_allocation.c](memory_allocation.c) - memory allocation functions
-  * `_realloc` - a custom realloc function for arrays of pointers
-* [new_strtok.c](new_strtok.c) - custom strtok and helper functions
-  * `check_match` - checks if a character matches any in a string
-  * `new_strtok` - a custom strtok for the shell
-* [path.c](path.c) - functions related to executing commands
-  * `path_execute` - executes a command in the PATH
-  * `find_path` - finds the PATH environment variable
-  * `check_for_path` - checks if the command is in the PATH
-  * `execute_cwd` - executes a command with an absolute path
-  * `check_for_dir` - checks if the command contains an absolute path
-* [simple_shell.c](simple_shell.c) - essential functions to the shell
-  * `main` - the main function of the program
-  * `sig_handler` - handles SIGINT
-* [strfunc.c](strfunc.c) - functions related to string manipulation
-  * `_puts` - writes a string to standart output
-  * `_strdup` - duplicates a string
-  * `_strcmpr` - compares two strings
-  * `_strcat` - concatenates two strings with a `/` in the middle
-  * `_strlen` - calculates the length of a string
-* [tokenize.c](tokenize.c) - tokenizing function
-  * `tokenize` - creates an array of tokens from a buffer with a specified delimiter
+## Example:
 
-## Requirements
+$ echo "echo 'holberton'" | ./sodash
+'holberton'
+$
+When sodash is invoked with standard input connected to a terminal (determined by isatty(3), the interactive mode is opened. sodash Will be using the following prompt ^-^ .
 
-simple_shell is designed to run in the `Ubuntu 14.04 LTS` linux environment and to be compiled using the GNU compiler collection v. `gcc 4.8.4` with flags`-Wall, -Werror, -Wextra, and -pedantic.`
+## Example:
 
-## Installation
+$./sodash
+^-^
+If a command line argument is invoked, sodash will take that first argument as a file from which to read commands.
 
-   - Clone this repository: `git clone "https://github.com/alexaorrico/simple_shell.git"`
-   - Change directories into the repository: `cd simple_shell`
-   - Compile: `gcc -Wall -Werror -Wextra -pedantic *.c -o hsh`
-   - Run the shell in interactive mode: `./hsh`
-   - Or run the shell in non-interactive mode: example `echo "pwd" | ./hsh`
+## Example:
 
-## Usage
+$ cat text
+echo 'ALX'
+$ ./sodash text
+'ALX'
+$
+## Environment
+Upon invocation, sodash receives and copies the environment of the parent process in which it was executed. This environment is an array of name-value strings describing variables in the format NAME=VALUE. A few key environmental variables are:
 
-The simple_shell is designed to execute commands in a similar manner to sh, however with more limited functionality. The development of this shell is ongoing. The below features will be checked as they become available (see man page for complete information on usage):
+## HOME
+The home directory of the current user and the default directory argument for the cd builtin command.
 
-### Features
-- [x] uses the PATH
-- [x] implements builtins
-- [x] handles command line arguments
-- [x] custom strtok function
-- [x] uses exit status
-- [x] shell continues upon Crtl+C (**^C**)
-- [x] handles comments (#)
-- [x] handles **;**
-- [ ] custom getline type function
-- [ ] handles **&&** and **||**
-- [ ] aliases
-- [ ] variable replacement
+$ echo "echo $HOME" | ./sodash
+/home/vagrant
+## PWD
+The current working directory as set by the cd command.
 
+$ echo "echo $PWD" | ./sodash
+/home/vagrant/holberton/simple_shell
+## OLDPWD
+The previous working directory as set by the cd command.
 
-### Builtins
+$ echo "echo $OLDPWD" | ./sodash
+/home/vagrant/holberton/bog-062019-test_suite
+## PATH
+A colon-separated list of directories in which the shell looks for commands. A null directory name in the path (represented by any of two adjacent colons, an initial colon, or a trailing colon) indicates the current directory.
 
-- [x] exit
-- [x] env
-- [x] setenv
-- [x] unsetenv
-- [ ] cd
-- [ ] help
-- [ ] history
+$ echo "echo $PATH" | ./sodash
+/home/vagrant/.cargo/bin:/home/vagrant/.local/bin:/home/vagrant/.rbenv/plugins/ruby-build/bin:/home/vagrant/.rbenv/shims:/home/vagrant/.rbenv/bin:/home/vagrant/.nvm/versions/node/v10.15.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/vagrant/.cargo/bin:/home/vagrant/workflow:/home/vagrant/.local/bin
+## Command Execution
+After receiving a command, sodash tokenizes it into words using " " as a delimiter. The first word is considered the command and all remaining words are considered arguments to that command. sodash then proceeds with the following actions:
 
-## Example of Use
-Run the executable in your terminal after compiling:
-```
-$ ./hsh
-$ # This is our rendition of the shell
-$ ls -al
-total 100
-drwxrwxr-x  3 vagrant vagrant  4096 Jul 19 22:49 .
-drwxr-xr-x 14 vagrant vagrant  4096 Jul 17 22:37 ..
--rw-rw-r--  1 vagrant vagrant   144 Jul 19 17:16 AUTHORS
--rw-rw-r--  1 vagrant vagrant  2367 Jul 19 22:33 builtins2.c
--rw-rw-r--  1 vagrant vagrant  2764 Jul 19 22:14 builtins.c
--rw-rw-r--  1 vagrant vagrant   710 Jul 16 01:03 environment.c
--rw-rw-r--  1 vagrant vagrant  1217 Jul 16 03:24 errors.c
-drwxrwxr-x  8 vagrant vagrant  4096 Jul 19 22:34 .git
--rwxrwxr-x  1 vagrant vagrant 32287 Jul 19 22:34 hsh
--rw-rw-r--  1 vagrant vagrant  1792 Jul 19 22:12 man_1_simple_shell
--rw-rw-r--  1 vagrant vagrant   484 Jul 15 20:09 memory_allocation.c
--rw-rw-r--  1 vagrant vagrant  1273 Jul 18 21:00 new_strtok.c
--rw-rw-r--  1 vagrant vagrant  3427 Jul 19 22:06 path.c
--rw-rw-r--  1 vagrant vagrant  2347 Jul 19 22:49 README.md
--rw-rw-r--  1 vagrant vagrant  1769 Jul 19 22:04 shell.h
--rw-rw-r--  1 vagrant vagrant  1480 Jul 18 21:15 simple_shell.c
--rw-rw-r--  1 vagrant vagrant  2111 Jul 16 01:10 strfunc.c
--rw-rw-r--  1 vagrant vagrant   719 Jul 19 21:46 tokenize.c
-```
-## Bugs
-At this time, there are no known bugs.
+If the first character of the command is neither a slash (\) nor dot (.), the shell searches for it in the list of shell builtins. If there exists a builtin by that name, the builtin is invoked.
+If the first character of the command is none of a slash (\), dot (.), nor builtin, sodash searches each element of the PATH environmental variable for a directory containing an executable file by that name.
+If the first character of the command is a slash (\) or dot (.) or either of the above searches was successful, the shell executes the named program with any remaining given arguments in a separate execution environment.
+## Exit Status
+sodash returns the exit status of the last command executed, with zero indicating success and non-zero indicating failure. If a command is not found, the return status is 127; if a command is found but is not executable, the return status is 126. All builtins return zero on success and one or two on incorrect usage (indicated by a corresponding error message).
 
-## Authors
-Joshuauche | [GitHub](https://github.com/Joshuauche)
+## Signals
+While running in interactive mode, sodash ignores the keyboard input ctrl+c. Alternatively, an input of End-Of-File ctrl+d will exit the program.
 
-Asad Ullah Irshad | [GitHub](https://github.com/underdogs180) 
+User hits ctrl+d in the foutrh command.
 
-## License
-simple_shell is open source and therefore free to download and use without permission.
+$ ./sodash
+^-^ ^C
+^-^ ^C
+^-^ ^C
+^-^
+## Variable Replacement
+sodash interprets the $ character for variable replacement.
+
+## $ENV_VARIABLE
+ENV_VARIABLE is substituted with its value.
+
+Example:
+
+$ echo "echo $PWD" | ./sodash
+/home/vagrant/holberton/simple_shell
+## $?
+? is substitued with the return value of the last program executed.
+
+Example:
+
+$ echo "echo $?" | ./sodash
+0
+$$
+The second $ is substitued with the current process ID.
+
+Example:
+
+$ echo "echo $$" | ./sodash
+3855
+## Comments
+sodash ignores all words and characters preceeded by a # character on a line.
+
+Example:
+
+$ echo "echo 'alx' #this will be ignored!" | ./sodash
+'alx'
+## Operators
+sodash specially interprets the following operator characters:
+
+; - Command separator
+Commands separated by a ; are executed sequentially.
+
+Example:
+
+$ echo "echo 'hello' ; echo 'world'" | ./sodash
+'hello'
+'world'
+## && - AND logical operator
+command1 && command2: command2 is executed if, and only if, command1 returns an exit status of zero.
+
+Example:
+
+$ echo "error! && echo 'holberton'" | ./sodash
+./shellby: 1: error!: not found
+$ echo "echo 'my name is' && echo 'holberton'" | ./sodash
+'my name is'
+'holberton'
+## || - OR logical operator
+command1 || command2: command2 is executed if, and only if, command1 returns a non-zero exit status.
+
+Example:
+
+$ echo "error! || echo 'wait for it'" | ./sodash
+./sodash: 1: error!: not found
+'wait for it'
+The operators && and || have equal precedence, followed by ;.
+
+## Builtin Commands
+### cd
+Usage: cd [DIRECTORY]
+Changes the current directory of the process to DIRECTORY.
+If no argument is given, the command is interpreted as cd $HOME.
+If the argument - is given, the command is interpreted as cd $OLDPWD and the pathname of the new working directory is printed to standad output.
+If the argument, -- is given, the command is interpreted as cd $OLDPWD but the pathname of the new working directory is not printed.
+The environment variables PWD and OLDPWD are updated after a change of directory.
+Example:
+
+$ ./sodash
+^-^ pwd
+/home/vagrant/holberton/simple_shell
+$ cd ../
+^-^ pwd
+/home/vagrant/holberton
+^-^ cd -
+^-^ pwd
+/home/vagrant/holberton/simple_shell
+## exit
+Usage: exit [STATUS]
+Exits the shell.
+The STATUS argument is the integer used to exit the shell.
+If no argument is given, the command is interpreted as exit 0.
+Example:
+
+$ ./sodash
+$ exit
+## env
+Usage: env
+Prints the current environment.
+Example:
+
+$ ./sodash
+$ env
+NVM_DIR=/home/vagrant/.nvm
+...
+## setenv
+Usage: setenv [VARIABLE] [VALUE]
+Initializes a new environment variable, or modifies an existing one.
+Upon failure, prints a message to stderr.
+Example:
+
+$ ./sodash
+$ setenv NAME Alx
+$ echo $NAME
+Alx
+## unsetenv
+Usage: unsetenv [VARIABLE]
+Removes an environmental variable.
+Upon failure, prints a message to stderr.
+Example:
+
+$ ./sodash
+$ setenv NAME Holberton
+$ unsetenv NAME
+$ echo $NAME
+
+$
+## Authors & Copyrights
+Newton Ombese
+Joyce Wamocho
+## More information
+Sodash is a simple shell unix command interpreter that is part of the alx low level programming module at Alx School and is intended to emulate the basics sh shell. All the information given in this README is based on the sodash and bash man (1) pages.
