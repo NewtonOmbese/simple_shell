@@ -4,90 +4,78 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <string.h>
-#include <dirent.h>
-#include <errno.h>
 #include <sys/wait.h>
+#include <limits.h>
+#include <signal.h>
 
-/* this just does in one line: free(x); x = NULL; */
-#define FREE(x) (x = (free(x), NULL))
 
-/* structs */
 /**
-  * struct order - struct to contain &&'s and ||'s
-  * @n: coded int, 1 = ; , 2 = && , 3 = ||
-  * @next: points to the next node
-  */
-typedef struct order
+ * struct variables - variables
+ * @av: command line arguments
+ * @buffer: buffer of command
+ * @env: environment variables
+ * @count: count of commands entered
+ * @argv: arguments at opening of shell
+ * @status: exit status
+ */
+typedef struct variables
 {
-	unsigned int n;
-	struct order *next;
-} order_t;
+	char **av;
+	char *buffer;
+	char **env;
+	size_t count;
+	char **argv;
+	int status;
+	char **commands;
+
+} vars_t;
+
 /**
-  * struct env_list - struct to contain env
-  * @name: name of env var
-  * @value: value of env var
-  * @next: points to the next node
-  */
-typedef struct env_list
+ * struct builtins - struct for the builtin functions
+ * @name: name of builtin command
+ * @f: function for corresponding builtin
+ */
+typedef struct builtins
 {
 	char *name;
-	char *value;
-	struct env_list *next;
-} env_list_t;
+	void (*f)(vars_t *);
+} builtins_t;
 
-/* getline */
-int _getline(char **lineptr, size_t *n, FILE *stream);
+char **make_env(char **env);
+void free_env(char **env);
 
-/* memory helpers */
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+ssize_t _puts(char *str);
+char *_strdup(char *strtodup);
+int _strcmpr(char *strcmp1, char *strcmp2);
+char *_strcat(char *strc1, char *strc2);
+unsigned int _strlen(char *str);
 
-/* string helpers */
-int _atoi(char *s);
-int _strlen(char *str);
-char *_strdup(char *str);
-int _strcmp(char *s1, char *s2);
-char *_strcpy(char *dest, char *src);
-char *_strcat(char *dest, char *src);
-char *_strtok(char *input, char *delim);
-char *_strchr(char *s, char c);
+char **tokenize(char *buffer, char *delimiter);
+char **_realloc(char **ptr, size_t *size);
+char *new_strtok(char *str, const char *delim);
 
-/* cmd_handler */
-int cmd_handler(char **argv, env_list_t **env);
-void built_in_handler(char **argv, env_list_t **env, int i);
-void _cd(char **argv, env_list_t **env);
+void (*check_for_builtins(vars_t *vars))(vars_t *vars);
+void new_exit(vars_t *vars);
+void _env(vars_t *vars);
+void new_setenv(vars_t *vars);
+void new_unsetenv(vars_t *vars);
 
-/* cmd assembly */
-char **get_tokens(char *str_tok, char *delim);
-int isin_dir(char *term, char *dir);
-char *whitcher(char *cmd, env_list_t **env);
-void rem_comments(char *str);
-void double_free(char **argv);
+void add_key(vars_t *vars);
+char **find_key(char **env, char *key);
+char *add_value(char *key, char *value);
+int _atoi(char *str);
 
-/* env variable */
-char **_initenv(void);
-void _setenv(char **argv, char ***env);
-void _unsetenv(char *entry, char ***env);
-char *_getenv(char *entry, char ***env);
-void _printenv(char ***env);
+void check_for_path(vars_t *vars);
+int path_execute(char *command, vars_t *vars);
+char *find_path(char **env);
+int execute_cwd(vars_t *vars);
+int check_for_dir(char *str);
 
-/* env_list */
-env_list_t **_initenv_list(void);
-void printenv_list(env_list_t **env);
-char *_getenv_list_value(char *name, env_list_t **env);
-env_list_t *_getenv_list_node(char *name, env_list_t **env);
-void _setenv_list(char **argv, env_list_t **env);
-void free_env_list_node(env_list_t *node);
-void _unsetenv_list(char **argv, env_list_t **env);
-void free_env_list(env_list_t **env);
-char **_get_str_env(env_list_t **env);
+void print_error(vars_t *vars, char *msg);
+void _puts2(char *str);
+char *_uitoa(unsigned int count);
 
-/* ops */
-void *op_push_end(order_t **ops, int n);
-char **_get_cmds(char *line, order_t **ops);
-void free_ops(order_t **ops);
-
-extern char **environ;
-#endif /* SHELL */
+#endif /* _SHELL_H_ */
